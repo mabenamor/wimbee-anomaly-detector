@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 
 from ensemble import VotingAnomalyDetector
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
-import umap
+import joblib
 
 UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "output"
@@ -27,6 +27,9 @@ with open("my_scaler.pkl", "rb") as sf:
     scaler = pickle.load(sf)
 with open("my_model.pkl", "rb") as mf:
     model = pickle.load(mf)
+
+# Charger le modèle UMAP pré-entraîné
+umap_model = joblib.load("umap_model.pkl")
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -63,13 +66,21 @@ def test():
         df["predicted_anomaly"] = y_pred
         anomalies = df[df["predicted_anomaly"] == 1]
 
-        # UMAP projection
-        reducer = umap.UMAP(n_components=2, random_state=42)
-        X_umap = reducer.fit_transform(X_scaled)
+        # UMAP projection with pre-trained model
+        X_umap = umap_model.transform(X_scaled)
         fig_name = f"umap_proj_{uuid.uuid4().hex[:6]}.png"
         plt.figure(figsize=(6, 5))
-        plt.scatter(X_umap[:, 0], X_umap[:, 1], c=y_pred, cmap="coolwarm", s=10)
-        plt.title("UMAP Projection of Input Data")
+        colors = ['#2ca02c' if y == 0 else '#d62728' for y in y_pred]
+        plt.scatter(X_umap[:, 0], X_umap[:, 1], c=colors, s=10, edgecolor='k', linewidth=0.3)
+        plt.title("UMAP Projection\nGreen = Normal, Red = Anomaly")
+        plt.xlabel("UMAP 1")
+        plt.ylabel("UMAP 2")
+        from matplotlib.lines import Line2D
+        legend_elements = [
+            Line2D([0], [0], marker='o', color='w', label='Normal', markerfacecolor='#2ca02c', markersize=6),
+            Line2D([0], [0], marker='o', color='w', label='Anomaly', markerfacecolor='#d62728', markersize=6)
+        ]
+        plt.legend(handles=legend_elements, loc='best')
         plt.savefig(os.path.join(STATIC_FOLDER, fig_name))
         plt.close()
 
@@ -121,7 +132,7 @@ def test():
 @app.route("/explanation")
 def explanation():
     image_name = session.get("umap_image")
-    return render_template("explanation.html", umap_image=image_name)
+    return render_template("explanation.html", umap_image=image_name, download_link=url_for('static', filename=image_name))
 
 @app.route("/download/<filename>")
 def download(filename):
