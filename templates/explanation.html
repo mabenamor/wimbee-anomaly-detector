@@ -5,12 +5,13 @@
 {% block content %}
   <h2 style="color: #004080; margin-bottom: 20px;">📈 Model Explanation with UMAP Projection</h2>
 
-  <p>This page provides a 2D visual explanation of the model's decision boundaries using UMAP projection. The uploaded data is projected into two dimensions, with anomalies highlighted in red.</p>
+  <p>This page provides a 2D visual explanation of the model's decision boundaries using UMAP projection. The uploaded data is projected into two dimensions, with anomalies highlighted in red and normal points in green.</p>
 
   {% if umap_image %}
     <div style="margin-top: 30px; text-align: center;">
       <img src="{{ url_for('static', filename=umap_image) }}" alt="UMAP Projection" style="max-width: 100%; border-radius: 10px; border: 1px solid #ccc;">
-      <p style="font-size: 13px; color: #777; margin-top: 10px;">UMAP projection of uploaded trade data (0 = Normal, 1 = Anomaly)</p>
+      <p style="font-size: 13px; color: #777; margin-top: 10px;">UMAP projection of uploaded trade data (Green = Normal, Red = Anomaly)</p>
+      <a href="{{ download_link }}" download class="btn" style="margin-top: 10px; display: inline-block; padding: 8px 16px; background-color: #004080; color: white; border-radius: 5px; text-decoration: none;">⬇️ Download UMAP Image</a>
     </div>
   {% else %}
     <div style="margin-top: 30px; color: #888;">
