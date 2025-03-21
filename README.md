@@ -12,7 +12,7 @@ The model uses a combination of:
 ## 🖥️ How to Run Locally (Windows)
 
 ### 1. ✅ Requirements
-- Python 3.7 or higher
+- Python 3.9.6
 - pip installed (comes with Python)
 
 ### 2. 📁 Project Structure
