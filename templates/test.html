@@ -18,45 +18,69 @@
       <a href="{{ url_for('download', filename=output_file) }}" class="btn" style="display: inline-block; margin-top: 10px; padding: 10px 20px; background-color: #004080; color: white; text-decoration: none; border-radius: 4px;">⬇️ Download Anomalies</a>
     </div>
 
-    {% if metrics %}
-      <h3 style="margin-top: 30px; color: #004080;">📊 Evaluation Metrics</h3>
-      <p><strong>Accuracy:</strong> {{ metrics.accuracy }}</p>
+    <div style="margin-top: 20px;">
+      <a href="{{ url_for('explanation') }}" class="btn" style="padding: 8px 15px; background-color: #0055aa; color: white; border-radius: 4px; text-decoration: none;">📈 View UMAP Explanation</a>
+    </div>
 
-      {% if metrics.conf_image %}
-        <h4>Confusion Matrix</h4>
-        <img src="{{ url_for('static', filename=metrics.conf_image) }}" alt="Confusion Matrix" style="max-width: 100%; border: 1px solid #ccc; border-radius: 5px;">
-      {% endif %}
-
-      {% if metrics.report_image %}
-        <h4 style="margin-top: 30px;">Classification Report</h4>
-        <img src="{{ url_for('static', filename=metrics.report_image) }}" alt="Classification Report" style="max-width: 100%; border: 1px solid #ccc; border-radius: 5px;">
-      {% endif %}
-    {% endif %}
-
-    {% if anomaly_table is not none and anomaly_table.shape[0] > 0 %}
-      <h3 style="margin-top: 40px; color: #004080;">🔍 Anomaly Preview</h3>
-      <div style="overflow-x: auto; margin-top: 10px;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-          <thead style="background-color: #f0f0f0;">
-            <tr>
-              {% for col in anomaly_table.columns %}
-                <th style="border: 1px solid #ddd; padding: 10px; text-align: left; font-weight: bold;">{{ col }}</th>
+    <h3 style="margin-top: 40px; color: #004080;">🎬 Live Anomaly Detection (animated)</h3>
+    <div id="animated-table" style="overflow-x: auto; margin-top: 10px;">
+      <table id="trade-table" style="width: 100%; border-collapse: collapse; font-size: 14px;">
+        <thead style="background-color: #f0f0f0;">
+          <tr>
+            {% for col in anomaly_table.columns %}
+              <th style="border: 1px solid #ddd; padding: 10px; text-align: left; font-weight: bold;">{{ col }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody id="trade-body">
+          {% for row in anomaly_table.values %}
+            <tr class="trade-row" style="display: none;">
+              {% for col_idx in range(anomaly_table.shape[1]) %}
+                {% set col_name = anomaly_table.columns[col_idx] %}
+                <td class="trade-cell" data-is-anomaly="{{ 1 if col_name == 'predicted_anomaly' and row[col_idx] == 1 else 0 }}" style="border: 1px solid #ddd; padding: 8px;">
+                  {{ row[col_idx] }}
+                </td>
               {% endfor %}
             </tr>
-          </thead>
-          <tbody>
-            {% for row in anomaly_table.values %}
-              <tr style="background-color: {% if loop.index0 % 2 == 0 %}#ffffff{% else %}#f9f9f9{% endif %};">
-                {% for val in row %}
-                  <td style="border: 1px solid #ddd; padding: 8px;">{{ val }}</td>
-                {% endfor %}
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <p style="font-size: 13px; color: #777; margin-top: 5px;">Showing first 10 anomalies</p>
-      </div>
-    {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+      <p style="font-size: 13px; color: #777; margin-top: 5px;">Animated reveal of the first 10 trades</p>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const rows = document.querySelectorAll(".trade-row");
+        let i = 0;
+
+        function showNextRow() {
+          if (i >= rows.length) return;
+          const row = rows[i];
+          row.style.display = "table-row";
+          row.style.transition = "all 0.5s ease";
+          const cells = row.querySelectorAll(".trade-cell");
+          cells.forEach(cell => {
+            if (cell.dataset.isAnomaly === "1") {
+              cell.style.backgroundColor = "#ffcccc";
+              cell.style.color = "#a10000";
+              cell.style.fontWeight = "bold";
+              cell.style.animation = "flash 0.8s ease-out";
+            }
+          });
+          i++;
+          setTimeout(showNextRow, 600);
+        }
+
+        showNextRow();
+      });
+    </script>
+
+    <style>
+      @keyframes flash {
+        0% { transform: scale(1.05); box-shadow: 0 0 8px rgba(255,0,0,0.6); }
+        100% { transform: scale(1); box-shadow: none; }
+      }
+    </style>
   {% endif %}
 
   <form method="post" enctype="multipart/form-data" action="/test" style="margin-top: 30px; background-color: #fefefe; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
