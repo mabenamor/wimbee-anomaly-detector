@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Wimbee Anomaly Detection Demo{% endblock %}</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7fa;
+      color: #333;
+    }
+    nav {
+      background-color: #004080;
+      color: white;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: normal;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    header {
+      background-color: #e6f0ff;
+      padding: 40px 30px 20px;
+      border-bottom: 1px solid #d0dbe8;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+      color: #004080;
+    }
+    header p {
+      margin: 10px 0 0;
+      font-size: 16px;
+      color: #444;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      background-color: #e9eef5;
+      font-size: 14px;
+      color: #666;
+    }
+    a {
+      color: #004080;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div>Wimbee × Santander – Anomaly Detection</div>
+    <div>
+      <a href="/">🏠 Home</a>
+      <a href="/about">📘 Approach</a>
+      <a href="/test">🧪 Try the Algorithm</a>
+    </div>
+  </nav>
+
+  <header>
+    <div class="container">
+      <h1>Welcome to the Murex Anomaly Detection Demo</h1>
+      <p>This tool demonstrates how Wimbee uses machine learning to detect anomalies in Murex trade data for Santander Bank.</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Wimbee – Internal demonstration for Santander Bank<br>
+    <a href="#">Privacy</a> · <a href="#">Terms</a>
+  </footer>
+</body>
+</html>

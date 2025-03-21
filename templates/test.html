@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block title %}Try the Algorithm – Wimbee{% endblock %}
+
+{% block content %}
+  <h2 style="color: #004080; margin-bottom: 20px;">🧪 Try the Anomaly Detection Engine</h2>
+  <p>Upload your Murex trade data below to detect suspicious transactions using our machine learning voting system (One-Class SVM + DBSCAN-like).</p>
+
+  {% if error %}
+    <div style="background-color: #fdecea; color: #a94442; padding: 15px; border-left: 5px solid #f5c6cb; border-radius: 4px; margin-top: 20px;">
+      <strong>Error:</strong> {{ error }}
+    </div>
+  {% endif %}
+
+  {% if success %}
+    <div style="background-color: #e7f7ed; color: #155724; padding: 15px; border-left: 5px solid #28a745; border-radius: 4px; margin-top: 20px;">
+      ✅ <strong>{{ anomalies_count }}</strong> anomalies detected (1 = Anomaly, 0 = Normal).<br>
+      <a href="{{ url_for('download', filename=output_file) }}" class="btn" style="display: inline-block; margin-top: 10px; padding: 10px 20px; background-color: #004080; color: white; text-decoration: none; border-radius: 4px;">⬇️ Download Anomalies</a>
+    </div>
+
+    {% if metrics %}
+      <h3 style="margin-top: 30px; color: #004080;">📊 Evaluation Metrics</h3>
+      <p><strong>Accuracy:</strong> {{ metrics.accuracy }}</p>
+
+      {% if metrics.conf_image %}
+        <h4>Confusion Matrix</h4>
+        <img src="{{ url_for('static', filename=metrics.conf_image) }}" alt="Confusion Matrix" style="max-width: 100%; border: 1px solid #ccc; border-radius: 5px;">
+      {% endif %}
+
+      {% if metrics.report_image %}
+        <h4 style="margin-top: 30px;">Classification Report</h4>
+        <img src="{{ url_for('static', filename=metrics.report_image) }}" alt="Classification Report" style="max-width: 100%; border: 1px solid #ccc; border-radius: 5px;">
+      {% endif %}
+    {% endif %}
+
+    {% if anomaly_table is not none and anomaly_table.shape[0] > 0 %}
+      <h3 style="margin-top: 40px; color: #004080;">🔍 Anomaly Preview</h3>
+      <div style="overflow-x: auto; margin-top: 10px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead style="background-color: #f0f0f0;">
+            <tr>
+              {% for col in anomaly_table.columns %}
+                <th style="border: 1px solid #ddd; padding: 10px; text-align: left; font-weight: bold;">{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in anomaly_table.values %}
+              <tr style="background-color: {% if loop.index0 % 2 == 0 %}#ffffff{% else %}#f9f9f9{% endif %};">
+                {% for val in row %}
+                  <td style="border: 1px solid #ddd; padding: 8px;">{{ val }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p style="font-size: 13px; color: #777; margin-top: 5px;">Showing first 10 anomalies</p>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" action="/test" style="margin-top: 30px; background-color: #fefefe; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+    <h4 style="margin-bottom: 15px; color: #004080;">📁 Upload CSV File</h4>
+    <div style="margin-bottom: 15px;">
+      <label for="file" style="display: block; font-weight: bold; margin-bottom: 5px;">Select File</label>
+      <input type="file" name="file" id="file" accept=".csv" required style="padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+    <button type="submit" class="btn" style="padding: 10px 20px; background-color: #004080; color: white; border: none; border-radius: 4px; cursor: pointer;">🚀 Run Detection</button>
+  </form>
+{% endblock %}

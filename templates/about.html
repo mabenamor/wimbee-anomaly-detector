@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+
+{% block title %}Our Approach – Wimbee{% endblock %}
+
+{% block content %}
+  <h2 style="color: #004080; margin-bottom: 20px;">📘 Our Approach to Anomaly Detection</h2>
+
+  <p>At <strong>Wimbee</strong>, we have designed a hybrid anomaly detection engine that combines two complementary machine learning models:</p>
+
+  <ul style="line-height: 1.7; margin-left: 20px;">
+    <li><strong>One-Class SVM</strong>: A model that learns the boundary of normal transactions and flags deviations. It works well in high-dimensional space and captures non-linear structures.</li>
+    <li><strong>Custom DBSCAN-like Method</strong>: Instead of using traditional DBSCAN which is sensitive to hyperparameters, we engineered a <em>hand-crafted density-based method</em> using nearest neighbors to better detect outliers in Murex financial data.</li>
+  </ul>
+
+  <p>Together, these two methods <strong>vote</strong> on each transaction. If at least two out of three methods agree (including an optional third model), the trade is flagged as suspicious.</p>
+
+  <h3 style="margin-top: 30px; color: #004080;">🚫 Why not Isolation Forest?</h3>
+  <p>We evaluated <strong>Isolation Forest</strong> extensively. While it performs well in many generic anomaly detection tasks, we found it underperformed on Murex-like financial data:</p>
+
+  <ul style="line-height: 1.7; margin-left: 20px;">
+    <li>It frequently labeled normal transactions as anomalies.</li>
+    <li>It lacked sensitivity to subtle but important deviations specific to market logic.</li>
+  </ul>
+
+  <p><strong>Conclusion:</strong> We chose to remove Isolation Forest from our final voting system to ensure better precision and trust in the predictions.</p>
+
+  <div style="margin-top: 40px;">
+    <a href="/test" class="btn" style="padding: 10px 20px; background-color: #004080; color: white; text-decoration: none; border-radius: 4px;">🧪 Try the Detection Engine</a>
+  </div>
+{% endblock %}
