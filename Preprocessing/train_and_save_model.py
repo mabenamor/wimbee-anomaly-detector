@@ -1,5 +1,5 @@
 import pandas as pd
-import pickle
+import joblib  # ✅ Import joblib à la place de pickle
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -58,13 +58,11 @@ def main():
     else:
         print("[INFO] Aucune colonne 'is_anomaly', pas d'évaluation.")
 
-    # 6) Sauvegarde du scaler + modèle
-    with open("my_scaler.pkl", "wb") as sf:
-        pickle.dump(scaler, sf)
-    with open("my_model.pkl", "wb") as mf:
-        pickle.dump(model, mf)
+    # 6) Sauvegarde du scaler + modèle avec joblib
+    joblib.dump(scaler, "my_scaler.joblib")
+    joblib.dump(model, "my_model.joblib")
 
-    print("[INFO] Fichiers 'my_scaler.pkl' et 'my_model.pkl' créés.")
+    print("[INFO] Fichiers 'my_scaler.joblib' et 'my_model.joblib' créés.")
 
 if __name__ == "__main__":
     main()

@@ -23,13 +23,11 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["OUTPUT_FOLDER"] = OUTPUT_FOLDER
 app.config["STATIC_FOLDER"] = STATIC_FOLDER
 
-with open("my_scaler.pkl", "rb") as sf:
-    scaler = pickle.load(sf)
-with open("my_model.pkl", "rb") as mf:
-    model = pickle.load(mf)
+scaler = joblib.load("my_scaler.joblib")
+model = joblib.load("my_model.joblib")
 
 # Charger le modèle UMAP pré-entraîné
-umap_model = joblib.load("umap_model.pkl")
+umap_model = joblib.load("umap_model.joblib")
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
